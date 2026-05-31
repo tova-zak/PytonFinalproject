@@ -1,4 +1,3 @@
-הנה קובץ ה-README המלא והסופי, **כולו בשפה האנגלית** (כפי שמקובל ומקצועי ב-GitHub), ובמבנה מהודק ונקי **ללא רווחים כפולים או מיותרים** בין השורות, כך שתוכלי להעתיק את כל הבלוק במכה אחת:
 # CodeGuard – Automated Static Code Analysis & Visualization System
 CodeGuard is an automated static code analysis system designed to detect quality issues, coding standard violations, and function length metrics. The system consists of a FastAPI backend server that performs the analysis and generates visual charts, alongside a client-side version control simulator (based on `wit` commands) that streams the code for analysis.
 ---
