@@ -3,7 +3,8 @@ import os
 # --- השינוי המרכזי: מייבאים את פונקציית הניקוי מ-utils ---
 from utils import clean_old_graphs
 
-OUTPUT_DIR = "static_graphs"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, "static_graphs")
 
 def generate_histogram(function_lengths: list):
     """
@@ -123,10 +124,11 @@ def generate_all_plots(all_files_results: list):
     # 1. הכנת הסביבה ומחיקת גרפים ישנים
     clean_old_graphs(OUTPUT_DIR)
 
+    # 2. ויดוא קיום תיקיית היעד ליצירת הגרפים
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    # 2. מבני נתונים לאיחוד הסטטיסטיקה מכל הקבצים
+    # 3. מבני נתונים לאיחוד הסטטיסטיקה מכל הקבצים
     aggregated_function_lengths = []
 
     total_issue_counts = {
@@ -137,29 +139,24 @@ def generate_all_plots(all_files_results: list):
         "non_english_name": 0
     }
 
-    # 3. עיבוד ושימוש במשתנה all_files_results שנתקבל בפונקציה
+    # 4. עיבוד וסכימת הנתונים מכל הקבצים שנבדקו
     for file_data in all_files_results:
-        # file_data הוא מילון שמגיע מ-CodeAnalyzer.run_all_checks()
         stats = file_data["stats"]
 
-        # א) איחוד כל אורכי הפונקציות לרשימה אחת גדולה
+        # א) איחוד כל אורכי הפונקציות לרשימה אחת גדולה עבור ההיסטוגרמה
         aggregated_function_lengths.extend(stats["function_lengths"])
 
-        # ב) סכימת כמות הבעיות מכל הקבצים יחד
+        # ב) סכימת כמות הבעיות מכל הקבצים יחד עבור גרף העוגה
         for issue_type, count in stats["issue_counts"].items():
-            total_issue_counts[issue_type] += count
+            if issue_type in total_issue_counts:
+                total_issue_counts[issue_type] += count
 
-    # 4. הפעלת פונקציות הציור עם הנתונים המאוחדים
-    # א) יצירת היסטוגרמה (מקבלת רשימת אורכים)
+    # 5. הפעלת רכיבי הציור של matplotlib
     generate_histogram(aggregated_function_lengths)
-
-    # ב) יצירת דיאגרמת עוגה (מקבלת מילון מונים מאוחד)
     generate_pie_chart(total_issue_counts)
-
-    # ג) יצירת גרף מקלות (מקבלת את כל הרשימה הגולמית כדי לדעת כמה בעיות יש *בכל קובץ*)
     generate_bar_chart(all_files_results)
 
-    # 5. החזרת רשימת נתיבי הקבצים שנוצרו
+    # 6. החזרת רשימת נתיבי הקבצים שנוצרו על הדיסק
     return [
         f"{OUTPUT_DIR}/histogram.png",
         f"{OUTPUT_DIR}/pie_chart.png",

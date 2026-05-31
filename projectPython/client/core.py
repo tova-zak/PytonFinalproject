@@ -247,7 +247,7 @@ def push_commit_to_server():
             files_payload.append(("files", (original_name, f)))
 
         # 6. שליחת הקבצים האמיתיים בבקשת POST לשרת ה-FastAPI שרץ ברקע
-        url = "http://localhost:8000/alerts"
+        url = "http://127.0.0.1:8000/analyze"
         response = requests.post(url, files=files_payload, timeout=10)
 
         if response.status_code == 200:
